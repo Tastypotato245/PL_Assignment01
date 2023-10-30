@@ -22,9 +22,7 @@ int main(int argc, char **argv)
 //    std::cout << input << std::endl;
 	input = "a := 10; b := a; c := a + b;";
 
-	Lexer lexer(input);
-	Parser parser(lexer, Token(Token::END, ""));
-	parser.parse();
-
+    Parser parser(input);
+    ProgramNode* rootNode = parser.parseProgram();
     return (0);
 }

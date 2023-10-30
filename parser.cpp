@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "treenode.h"
 
 Token::Token(Type type, std::string value) : type(type), value(value) {}
 
@@ -81,93 +82,77 @@ bool SymbolTable::exists(const std::string& name) const {
 	return symbols.find(name) != symbols.end();
 }
 
-Parser::Parser(Lexer &lexer, Token currentToken) : lexer(lexer), currentToken(currentToken) {}
+/***********************PARSER*********************/
 
-void Parser::parse() {
-	currentToken = lexer.getNextToken();
-	while (currentToken.type != Token::END && currentToken.type != Token::INVALID) {
-		assignment();
-	}
+ProgramNode* Parser::parseProgram() {
+    return new ProgramNode(*parseStatements());
 }
 
-SymbolTable Parser::getSymbolTable() const {
-	return symbolTable;
+StatementsNode* Parser::parseStatements() {
+    StatementNode* statement = parseStatement();
+    eat(Token::SEMI_COLON);
+    if (currentToken.type != Token::END) {
+        return new StatementsNode(*statement, true, *parseStatements());
+    }
+    return nullptr; // or handle it as per your requirement
 }
 
-void Parser::assignment() {
-	std::string varName = currentToken.value;
-	consume(Token::IDENT);
-	consume(Token::ASSIGN_OP);
-	double value = expression();
-
-	if (!error) {
-		symbolTable.set(varName, value);
-		std::cout << varName << ": " << value << std::endl;
-	} else {
-		std::cout << "(Error) \"" << varName << "\" 사용 전에 선언되어야 합니다." << std::endl;
-	}
-
-	consume(Token::SEMI_COLON);
+StatementNode* Parser::parseStatement() {
+    std::string ident = currentToken.value;
+    eat(Token::IDENT);
+    eat(Token::ASSIGN_OP);
+    ExpressionNode* expression = parseExpression();
+    return new StatementNode(isParsed, symbolTable, ident, isParsed, *expression);
 }
 
-double Parser::expression() {
-	double result = term();
-	while (currentToken.type == Token::ADD_OP) {
-		if (currentToken.value == "+") {
-			consume(Token::ADD_OP);
-			result += term();
-		} else if (currentToken.value == "-") {
-			consume(Token::ADD_OP);
-			result -= term();
-		}
-	}
-	return result;
+ExpressionNode* Parser::parseExpression() {
+    TermNode* term = parseTerm();
+    TermTailNode* termTail = parseTermTail();
+    return new ExpressionNode(true, symbolTable, *term, *termTail);
 }
 
-double Parser::term() {
-	double result = factor();
-	while (currentToken.type == Token::MUL_OP) {
-		if (currentToken.value == "*") {
-			consume(Token::MUL_OP);
-			result *= factor();
-		} else if (currentToken.value == "/") {
-			consume(Token::MUL_OP);
-			double denom = factor();
-			if (denom != 0) {
-				result /= denom;
-			} else {
-				std::cerr << "Zero division error!" << std::endl;
-				error = true;
-			}
-		}
-	}
-	return result;
+TermTailNode* Parser::parseTermTail() {
+    if (currentToken.type == Token::ADD_OP) {
+        int add_op = (currentToken.value == "+") ? 1 : 2;
+        eat(Token::ADD_OP);
+        TermNode* term = parseTerm();
+        TermTailNode* termTail = parseTermTail();
+        return new TermTailNode(true, symbolTable, add_op, term, termTail);
+    }
+    return nullptr; // or handle it as per your requirement
 }
 
-double Parser::factor() {
-	double result = 0;
-	if (currentToken.type == Token::CONST) {
-		result = std::stod(currentToken.value);
-		consume(Token::CONST);
-	} else if (currentToken.type == Token::IDENT) {
-		if (symbolTable.get(currentToken.value, result)) {
-			consume(Token::IDENT);
-		} else {
-			error = true;
-		}
-	} else if (currentToken.type == Token::LEFT_PAREN) {
-		consume(Token::LEFT_PAREN);
-		result = expression();
-		consume(Token::RIGHT_PAREN);
-	}
-	return result;
+TermNode* Parser::parseTerm() {
+    FactorNode* factor = parseFactor();
+    FactorTailNode* factorTail = parseFactorTail();
+    return new TermNode(true, symbolTable, *factor, *factorTail);
 }
 
-void Parser::consume(Token::Type type) {
-	if (currentToken.type == type) {
-		currentToken = lexer.getNextToken();
-	} else {
-		std::cerr << "Unexpected token: " << currentToken.value << std::endl;
-		error = true;
-	}
+FactorTailNode* Parser::parseFactorTail() {
+    if (currentToken.type == Token::MUL_OP) {
+        int mul_op = (currentToken.value == "*") ? 1 : 2;
+        eat(Token::MUL_OP);
+        FactorNode* factor = parseFactor();
+        FactorTailNode* factorTail = parseFactorTail();
+        return new FactorTailNode(true, symbolTable, mul_op, factor, factorTail);
+    }
+    return nullptr; // or handle it as per your requirement
+}
+
+FactorNode* Parser::parseFactor() {
+    if (currentToken.type == Token::LEFT_PAREN) {
+        eat(Token::LEFT_PAREN);
+        ExpressionNode* expression = parseExpression();
+        eat(Token::RIGHT_PAREN);
+        return new FactorNode(isParsed, symbolTable, isParsed, expression, isParsed);
+    } else if (currentToken.type == Token::IDENT) {
+        std::string ident = currentToken.value;
+        eat(Token::IDENT);
+        return new FactorNode(true, symbolTable, ident);
+    } else if (currentToken.type == Token::CONST) {
+        double value = std::stod(currentToken.value);
+        eat(Token::CONST);
+        return new FactorNode(true, symbolTable, value);
+    }
+    return nullptr; // or handle it as per your requirement
 }

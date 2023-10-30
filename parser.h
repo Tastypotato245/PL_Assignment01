@@ -1,6 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "treenode.h"
 #include <iostream>
 #include <string>
 #include <map>
@@ -49,20 +50,35 @@ private:
 };
 
 class Parser {
-public:
-    Parser(Lexer &lexer, Token currentToken);
-    void parse();
-    SymbolTable getSymbolTable() const;
-
 private:
-    void assignment();
-    double expression();
-    double term();
-    double factor();
-    void consume(Token::Type type);
-    Lexer& lexer;
+    Lexer lexer;
     Token currentToken;
     SymbolTable symbolTable;
-    bool error;
+    bool isParsed;
+
+    void error(const std::string& message) {
+        std::cout << "Error parsing: " << message << ". Got: " << currentToken.value << "\n";
+        isParsed = false;
+    }
+
+    void eat(Token::Type tokenType) {
+        if (currentToken.type == tokenType) {
+            currentToken = lexer.getNextToken();
+        } else {
+            error("Expected token type: " + std::to_string(tokenType));
+        }
+    }
+
+public:
+    Parser(const std::string& input) : lexer(input), currentToken(lexer.getNextToken()), symbolTable(), isParsed(true) {}
+    Parser(Lexer &lexer, Token currentToken) : lexer(lexer), currentToken(currentToken), symbolTable(), isParsed(true) {}
+    ProgramNode* parseProgram();
+    StatementsNode* parseStatements();
+    StatementNode* parseStatement();
+    ExpressionNode* parseExpression();
+    TermTailNode* parseTermTail();
+    TermNode* parseTerm();
+    FactorTailNode* parseFactorTail();
+    FactorNode* parseFactor();
 };
 #endif
