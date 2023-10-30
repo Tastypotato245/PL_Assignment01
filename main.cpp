@@ -17,9 +17,10 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    std::getline(file, input, '\0');
-    file.close();
-    std::cout << input << std::endl;
+//    std::getline(file, input, '\0');
+//    file.close();
+//    std::cout << input << std::endl;
+	input = "a := 10; b := a; c := a + b;";
 
 	Lexer lexer(input);
 	Parser parser(lexer, Token(Token::END, ""));
