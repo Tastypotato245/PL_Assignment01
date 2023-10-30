@@ -1,7 +1,7 @@
 NAME	= parser
-SRCS	= parser.cpp main.cpp
+SRCS	= parser.cpp main.cpp treenode.cpp
 OBJS	= $(SRCS:.cpp=.o)
-HEAD	= parser.h
+HEAD	= parser.h treenode.h utils.h
 
 CC		= clang++
 
@@ -9,7 +9,7 @@ CC		= clang++
 all		: $(NAME)
 
 $(NAME)	: $(OBJS) $(HEAD)
-	$(CC) $(OBJS) -include $(HEAD) -o $@
+	$(CC) $(OBJS) -I./ -o $@
 
 %.o		: %.cpp
 	$(CC) -c $^ -o $@
