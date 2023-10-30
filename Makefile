@@ -1,5 +1,5 @@
 NAME	= parser
-SRCS	= lexer.cpp parser.cpp main.cpp
+SRCS	= parser.cpp main.cpp
 OBJS	= $(SRCS:.cpp=.o)
 
 CC		= clang++
