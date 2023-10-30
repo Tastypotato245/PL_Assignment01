@@ -3,7 +3,8 @@
 
 #include <iostream>
 #include <string>
-#include <unordered_map>
+#include <map>
+#include <cmath>
 
 class Token {
 public:
@@ -40,10 +41,11 @@ class SymbolTable {
 public:
     void set(const std::string& name, double value);
     bool get(const std::string& name, double& value) const;
+    void del(const std::string& name);
     bool exists(const std::string& name) const;
 
 private:
-    std::unordered_map<std::string, double> symbols;
+    std::map<std::string, double> symbols;
 };
 
 class Parser {
@@ -63,5 +65,4 @@ private:
     SymbolTable symbolTable;
     bool error;
 };
-
 #endif
