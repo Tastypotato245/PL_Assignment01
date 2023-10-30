@@ -20,7 +20,7 @@ double StatementNode::calculate() {
 //expression
 ExpressionNode::ExpressionNode(bool isParsed, SymbolTable& symbolTable, TermNode& termNode, TermTailNode& termTailNode): TreeNode(isParsed,symbolTable),
                                                                                                                          termTailNode(termTailNode), termNode(termNode){};
-double ExpressionNode::calculate()  {
+double ExpressionNode::calculate() {
     if (termTailNode.get_op() == 1)
         return termNode.calculate() + termTailNode.calculate();
     if (termTailNode.get_op() == 2)
