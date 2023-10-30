@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "parser.h"
 
 int main(int argc, char **argv)
 {
@@ -20,5 +21,9 @@ int main(int argc, char **argv)
     file.close();
     std::cout << input << std::endl;
 
-    return 0;
+	Lexer lexer(input);
+	Parser parser(lexer, Token(Toekn::END, ""));
+	parser.parse();
+
+    return (0);
 }

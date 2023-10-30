@@ -216,12 +216,12 @@ private:
     bool error = false;
 };
 
-int main() {
-    std::string code =
-            "operand2 := 2;\n"
-            "target := operand2 * 3;";
-    Lexer lexer(code);
-    Parser parser(lexer, Token(Token::END, ""));
-    parser.parse();
-    return (0);
-}
+//int main() {
+//    std::string code =
+//            "operand2 := 2;\n"
+//            "target := operand2 * 3;";
+//    Lexer lexer(code);
+//    Parser parser(lexer, Token(Token::END, ""));
+//    parser.parse();
+//    return (0);
+//}
