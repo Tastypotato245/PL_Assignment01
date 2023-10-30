@@ -3,13 +3,11 @@
 #ifndef TREENODE_H
 #define TREENODE_H
 
-#include "parser.h"
-#include <string>
+#include "utils.h"
 
 class TreeNode {
 public:
     TreeNode(bool isParsed, SymbolTable& symbolTable);
-    virtual ~TreeNode();
     virtual double calculate() = 0;
     void setIsParsed();
 
@@ -81,11 +79,11 @@ private:
 
 class StatementNode : public TreeNode {
 public:
-    StatementNode(bool isParsed, SymbolTable& symbolTable, std::string& ident, bool assignment_op, ExpressionNode& expressionNode);
+    StatementNode(bool isParsed, SymbolTable& symbolTable, std::string ident, bool assignment_op, ExpressionNode& expressionNode);
     double calculate() override;
 
 private:
-    std::string& ident;
+    std::string ident;
     bool assignment_op;
     ExpressionNode& expressionNode;
 };
@@ -93,19 +91,17 @@ private:
 class StatementsNode {
 public:
     StatementsNode(StatementNode& statementNode, bool semi_colon, StatementsNode& statementsNode);
-
-private:
     StatementNode& statementNode;
-    bool semi_colon;
     StatementsNode& statementsNode;
+private:
+    bool semi_colon;
 };
 
 class ProgramNode {
 public:
     ProgramNode(StatementsNode& statementsNode);
-
-private:
     StatementsNode& statementsNode;
+private:
 };
 
 #endif //TREENODE_H

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <fstream>
 #include <string>
 #include "parser.h"
@@ -20,9 +19,10 @@ int main(int argc, char **argv)
 //    std::getline(file, input, '\0');
 //    file.close();
 //    std::cout << input << std::endl;
-	input = "a := 10; b := a; c := a + b;";
+	input = "a := 10; b := a; c := a + b";
 
     Parser parser(input);
     ProgramNode* rootNode = parser.parseProgram();
+    std::cout << rootNode->statementsNode.statementNode.calculate() << "\n";
     return (0);
 }
