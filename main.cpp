@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     std::cout << input << std::endl;
 
 	Lexer lexer(input);
-	Parser parser(lexer, Token(Toekn::END, ""));
+	Parser parser(lexer, Token(Token::END, ""));
 	parser.parse();
 
     return (0);

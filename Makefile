@@ -1,6 +1,7 @@
 NAME	= parser
 SRCS	= parser.cpp main.cpp
 OBJS	= $(SRCS:.cpp=.o)
+HEAD	= parser.h
 
 CC		= clang++
 
@@ -8,7 +9,7 @@ CC		= clang++
 all		: $(NAME)
 
 $(NAME)	: $(OBJS) $(HEAD)
-	$(CC) $(OBJS) -o $@ -I./
+	$(CC) $(OBJS) -include $(HEAD) -o $@
 
 %.o		: %.cpp
 	$(CC) -c $^ -o $@

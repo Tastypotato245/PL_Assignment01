@@ -58,7 +58,6 @@ private:
     double term();
     double factor();
     void consume(Token::Type type);
-
     Lexer& lexer;
     Token currentToken;
     SymbolTable symbolTable;
