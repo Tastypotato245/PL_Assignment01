@@ -25,6 +25,7 @@ int main(int argc, char **argv)
     Parser parser(input, symbolTable);
     ProgramNode* rootNode = parser.parseProgram();
     rootNode->calculate_statements();
+
 	symbolTable.print_result();
 
     return (0);
