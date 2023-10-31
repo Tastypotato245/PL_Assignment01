@@ -2,6 +2,11 @@
 #include <string>
 #include "parser.h"
 
+void asdf()
+{
+	system("leaks parser");
+}
+
 int main(int argc, char **argv)
 {
     std::string input;
@@ -25,8 +30,9 @@ int main(int argc, char **argv)
     Parser parser(input, symbolTable);
     ProgramNode* rootNode = parser.parseProgram();
     rootNode->calculate_statements();
-
 	symbolTable.print_result();
 
+	delete rootNode;
+	atexit(asdf);
     return (0);
 }
