@@ -2,6 +2,7 @@
 #define UTILS_H
 #include <iostream>
 #include <map>
+#include <cmath>
 #include <string>
 
 class Token {
