@@ -6,8 +6,22 @@ TreeNode::TreeNode(bool isParsed, SymbolTable& symbolTable) : isParsed(isParsed)
 void TreeNode::setIsParsed(){isParsed = true;}
 //program
 ProgramNode::ProgramNode(StatementsNode* statementsNode) : statementsNode(statementsNode){};
+
+void ProgramNode::calculate_statements(){
+	statementsNode->calculate_statement();
+}
+
+
 //statements
 StatementsNode::StatementsNode(StatementNode* statementNode, bool semi_colon, StatementsNode* statementsNode) : statementNode(statementNode), semi_colon(semi_colon), statementsNode(statementsNode){};
+
+void StatementsNode::calculate_statement(){
+	statementNode->calculate();
+	if (statementsNode != nullptr)
+		statementsNode->calculate_statement();
+}
+
+
 //statement
 StatementNode::StatementNode(bool isParsed, SymbolTable& symbolTable, std::string ident, bool assignment_op, ExpressionNode* expressionNode) : TreeNode(isParsed, symbolTable), ident(ident), assignment_op(assignment_op), expressionNode(expressionNode){};
 double StatementNode::calculate() {

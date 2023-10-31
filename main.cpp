@@ -19,10 +19,13 @@ int main(int argc, char **argv)
     std::getline(file, input, '\0');
     file.close();
     std::cout << input << std::endl;
-//	input = "a := 10";
+//	std::string input a = "";
 
-    Parser parser(input);
+	SymbolTable symbolTable;
+    Parser parser(input, symbolTable);
     ProgramNode* rootNode = parser.parseProgram();
-    std::cout << rootNode->statementsNode->statementNode->calculate() << "\n";
+    rootNode->calculate_statements();
+	symbolTable.print_result();
+
     return (0);
 }

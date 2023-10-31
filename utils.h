@@ -42,7 +42,7 @@ public:
     bool get(const std::string& name, double& value) const;
     void del(const std::string& name);
     bool exists(const std::string& name) const;
-
+	void print_result() const;
 private:
     std::map<std::string, double> symbols;
 };

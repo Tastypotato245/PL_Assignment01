@@ -93,6 +93,7 @@ public:
     StatementsNode(StatementNode* statementNode, bool semi_colon, StatementsNode* statementsNode);
     StatementNode* statementNode;
     StatementsNode* statementsNode;
+	void calculate_statement();
 private:
     bool semi_colon;
 };
@@ -101,6 +102,7 @@ class ProgramNode {
 public:
     ProgramNode(StatementsNode* statementsNode);
     StatementsNode* statementsNode;
+	void calculate_statements();
 private:
 };
 

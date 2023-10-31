@@ -81,5 +81,9 @@ bool SymbolTable::exists(const std::string& name) const {
 	return symbols.find(name) != symbols.end();
 }
 
-
-
+void SymbolTable::print_result() const{
+	std::cout << "Result ==>";
+	for(const auto& pair : symbols) {
+        std::cout << " " << pair.first << ": " << pair.second << ";";
+    }
+}

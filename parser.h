@@ -10,7 +10,7 @@ class Parser {
 private:
     Lexer lexer;
     Token currentToken;
-    SymbolTable symbolTable;
+    SymbolTable& symbolTable;
     bool isParsed;
 
     void error(const std::string& message) {
@@ -27,8 +27,10 @@ private:
     }
 
 public:
-    Parser(const std::string& input) : lexer(input), currentToken(lexer.getNextToken()), isParsed(true) {}
-    Parser(Lexer &lexer, Token currentToken) : lexer(lexer), currentToken(currentToken), isParsed(true) {}
+    Parser(const std::string& input, SymbolTable& symbolTable) : lexer(input), currentToken(lexer.getNextToken()), isParsed(true), symbolTable(symbolTable) {}
+
+//    Parser(Lexer &lexer, Token currentToken) : lexer(lexer), currentToken(currentToken), isParsed(true) {}
+
     ProgramNode* parseProgram();
     StatementsNode* parseStatements();
     StatementNode* parseStatement();
