@@ -7,12 +7,19 @@ ProgramNode* Parser::parseProgram() {
 }
 
 StatementsNode* Parser::parseStatements() {
+    chk_ID = 0;
+    chk_CONST = 0;
+    chk_OP = 0;
 	std::cout << "\t - parseStatements excute\n";
     StatementNode* statement = parseStatement();
     if (currentToken.type != Token::END) {
     	eat(Token::SEMI_COLON);
+        std::cout << ";" << std::endl;
+        std::cout << "ID: " << chk_ID << "; CONST:" << chk_CONST << "; OP: " << chk_OP << std::endl;
         return new StatementsNode(statement, isParsed, parseStatements());
     }
+    std::cout << ";" << std::endl;
+    std::cout << "ID: " << chk_ID << "; CONST:" << chk_CONST << "; OP: " << chk_OP << std::endl;
     return new StatementsNode(statement, isParsed, nullptr);
 }
 
@@ -71,6 +78,14 @@ FactorNode* Parser::parseFactor() {
 		std::cout << "\t\t\t\t factor => const : " << value << "\n";
         eat(Token::CONST);
         return new FactorNode(true, symbolTable, value);
+    } else if (currentToken.type == Token::ADD_OP) {
+        std::cout << "(Warning)" << "Operator is duplicated." << std::endl;
+        eat(Token::ADD_OP);
+        return parseFactor();
+    } else if (currentToken.type == Token::MUL_OP) {
+        std::cout << "(Warning)" << "Operator is duplicated." << std::endl;
+        eat(Token::MUL_OP);
+        return parseFactor();
     }
     return nullptr;
 }
