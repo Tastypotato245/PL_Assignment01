@@ -79,28 +79,28 @@ private:
 
 class StatementNode : public TreeNode {
 public:
-    StatementNode(bool isParsed, SymbolTable& symbolTable, std::string ident, bool assignment_op, ExpressionNode& expressionNode);
+    StatementNode(bool isParsed, SymbolTable& symbolTable, std::string ident, bool assignment_op, ExpressionNode* expressionNode);
     double calculate();
 
 private:
     std::string ident;
     bool assignment_op;
-    ExpressionNode& expressionNode;
+    ExpressionNode* expressionNode;
 };
 
 class StatementsNode {
 public:
-    StatementsNode(StatementNode& statementNode, bool semi_colon, StatementsNode& statementsNode);
-    StatementNode& statementNode;
-    StatementsNode& statementsNode;
+    StatementsNode(StatementNode* statementNode, bool semi_colon, StatementsNode* statementsNode);
+    StatementNode* statementNode;
+    StatementsNode* statementsNode;
 private:
     bool semi_colon;
 };
 
 class ProgramNode {
 public:
-    ProgramNode(StatementsNode& statementsNode);
-    StatementsNode& statementsNode;
+    ProgramNode(StatementsNode* statementsNode);
+    StatementsNode* statementsNode;
 private:
 };
 

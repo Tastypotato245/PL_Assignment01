@@ -1,102 +1,19 @@
 #include "parser.h"
 #include "treenode.h"
 
-Token::Token(Type type, std::string value) : type(type), value(value) {}
-
-Lexer::Lexer(const std::string& input) : input(input), position(0) {}
-
-Token Lexer::getNextToken() {
-	while (position < input.size() && std::isspace(input[position])) {
-		++position;
-	}
-
-	if (position >= input.size()) {
-		return Token(Token::END, "");
-	}
-
-	char currentChar = input[position];
-
-	if (std::isdigit(currentChar)) {
-		std::string num;
-		while (position < input.size() && std::isdigit(input[position])) {
-			num += input[position++];
-		}
-		return Token(Token::CONST, num);
-	}
-
-	if (std::isalpha(currentChar)) {
-		std::string ident;
-		while (position < input.size() && (std::isalnum(input[position]) || input[position] == '_')) {
-			ident += input[position++];
-		}
-		return Token(Token::IDENT, ident);
-	}
-
-	if (currentChar == '+' || currentChar == '-') {
-		++position;
-		return Token(Token::ADD_OP, std::string(1, currentChar));
-	}
-
-	if (currentChar == '*' || currentChar == '/') {
-		++position;
-		return Token(Token::MUL_OP, std::string(1, currentChar));
-	}
-
-	if (currentChar == ';') {
-		++position;
-		return Token(Token::SEMI_COLON, ";");
-	}
-
-	if (currentChar == '(') {
-		++position;
-		return Token(Token::LEFT_PAREN, "(");
-	}
-
-	if (currentChar == ')') {
-		++position;
-		return Token(Token::RIGHT_PAREN, ")");
-	}
-
-	if (currentChar == ':' && (position + 1 < input.size()) && input[position + 1] == '=') {
-		position += 2;
-		return Token(Token::ASSIGN_OP, ":=");
-	}
-
-	return Token(Token::INVALID, std::string(1, currentChar));
-}
-
-void SymbolTable::set(const std::string& name, double value) {
-	symbols[name] = value;
-}
-
-bool SymbolTable::get(const std::string& name, double& value) const {
-	auto it = symbols.find(name);
-	if (it != symbols.end()) {
-		value = it->second;
-		return true;
-	}
-	return false;
-}
-
-bool SymbolTable::exists(const std::string& name) const {
-	return symbols.find(name) != symbols.end();
-}
-
-/***********************PARSER*********************/
-
 ProgramNode* Parser::parseProgram() {
 	std::cout << " - parseProgram excute\n";
-    return new ProgramNode(*parseStatements());
+    return new ProgramNode(parseStatements());
 }
 
 StatementsNode* Parser::parseStatements() {
 	std::cout << "\t - parseStatements excute\n";
     StatementNode* statement = parseStatement();
-    eat(Token::SEMI_COLON);
     if (currentToken.type != Token::END) {
-        return new StatementsNode(*statement, isParsed, *parseStatements());
+    	eat(Token::SEMI_COLON);
+        return new StatementsNode(statement, isParsed, parseStatements());
     }
-    return nullptr; // or handle it as per your requirement
+    return new StatementsNode(statement, isParsed, nullptr);
 }
 
 StatementNode* Parser::parseStatement() {
@@ -105,7 +22,7 @@ StatementNode* Parser::parseStatement() {
     eat(Token::ASSIGN_OP);
 	std::cout << "\t - parseStatement excute : ident : " << ident << "\n";
     ExpressionNode* expression = parseExpression();
-    return new StatementNode(isParsed, symbolTable, ident, isParsed, *expression);
+    return new StatementNode(isParsed, symbolTable, ident, isParsed, expression);
 }
 
 ExpressionNode* Parser::parseExpression() {
@@ -133,7 +50,7 @@ TermTailNode* Parser::parseTermTail() {
         return new TermTailNode(isParsed, symbolTable, add_op, term, termTail);
     }
 	std::cout << "\t\t\t\t term_tail => lambda\n";
-    return nullptr; // or handle it as per your requirement
+    return nullptr; 
 }
 
 FactorNode* Parser::parseFactor() {
@@ -155,7 +72,7 @@ FactorNode* Parser::parseFactor() {
         eat(Token::CONST);
         return new FactorNode(true, symbolTable, value);
     }
-    return nullptr; // or handle it as per your requirement
+    return nullptr;
 }
 
 FactorTailNode* Parser::parseFactorTail() {
@@ -168,6 +85,6 @@ FactorTailNode* Parser::parseFactorTail() {
         return new FactorTailNode(true, symbolTable, mul_op, factor, factorTail);
     }
 	std::cout << "\t\t\t\t factor_tail => lambda \n";
-    return nullptr; // or handle it as per your requirement
+    return nullptr;
 }
 

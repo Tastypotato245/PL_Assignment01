@@ -1,10 +1,9 @@
 NAME	= parser
-SRCS	= parser.cpp main.cpp treenode.cpp
+SRCS	= parser.cpp main.cpp treenode.cpp utils.cpp
 OBJS	= $(SRCS:.cpp=.o)
 HEAD	= parser.h treenode.h utils.h
 
-CC		= clang++
-
+CC		= clang++ -std=c++11
 
 all		: $(NAME)
 
@@ -22,7 +21,11 @@ fclean	:
 	rm -f $(NAME)
 
 re		:
-	make all
 	make fclean
+	make all
+
+test	:
+	make re
+	./parser file.txt
 
 .PHONY	: all clean fclean re

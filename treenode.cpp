@@ -5,15 +5,14 @@
 TreeNode::TreeNode(bool isParsed, SymbolTable& symbolTable) : isParsed(isParsed), symbolTable(symbolTable){};
 void TreeNode::setIsParsed(){isParsed = true;}
 //program
-ProgramNode::ProgramNode(StatementsNode& statementsNode) : statementsNode(statementsNode){};
+ProgramNode::ProgramNode(StatementsNode* statementsNode) : statementsNode(statementsNode){};
 //statements
-StatementsNode::StatementsNode(StatementNode& statementNode, bool semi_colon, StatementsNode& statementsNode) : statementNode(statementNode), semi_colon(semi_colon), statementsNode(statementsNode){};
+StatementsNode::StatementsNode(StatementNode* statementNode, bool semi_colon, StatementsNode* statementsNode) : statementNode(statementNode), semi_colon(semi_colon), statementsNode(statementsNode){};
 //statement
-StatementNode::StatementNode(bool isParsed, SymbolTable& symbolTable, std::string ident, bool assignment_op, ExpressionNode& expressionNode) : TreeNode(isParsed, symbolTable),
-                                                                                                                                                ident(ident), assignment_op(assignment_op), expressionNode(expressionNode){};
+StatementNode::StatementNode(bool isParsed, SymbolTable& symbolTable, std::string ident, bool assignment_op, ExpressionNode* expressionNode) : TreeNode(isParsed, symbolTable), ident(ident), assignment_op(assignment_op), expressionNode(expressionNode){};
 double StatementNode::calculate() {
     double value;
-    value = expressionNode.calculate();
+    value = expressionNode->calculate();
     symbolTable.set(ident, value);
     return value;
 }
@@ -72,6 +71,7 @@ double FactorNode::calculate() {
             return value;
         if (expressionNode != nullptr)
             return expressionNode->calculate();
+		//std::cout << "_const : " << _const << "\n";
         return _const;
     }
 	return (std::nan("NaN"));
