@@ -10,7 +10,7 @@ Parser
 ## Build and Run
 ### Build
 ```bash
-$ make
+$> make
 ```
 ### Run
 ```bash
