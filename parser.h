@@ -15,16 +15,16 @@ private:
     int chk_ID;
     int chk_CONST;
     int chk_OP;
-    std::string output_ident;
+    std::string output_Line;
 
-    void error(const std::string& message) {
-        std::cout << "Error parsing: " << message << ". Got: " << currentToken.value << "\n";
+    void error(const std::string message/* Token::Type tokenType*/) {
+        std::cout << "Error parsing: " << message/*"Expected token type: " << std::to_string(tokenType)*/ << ". Got: " << currentToken.value << "\n";
         isParsed = false;
     }
 
     void eat(Token::Type tokenType) {
         if (currentToken.type == tokenType) {
-            if (tokenType == Token::IDENT)chk_ID++;
+            if (tokenType == Token::IDENT) chk_ID++;
             else if (tokenType == Token::CONST)chk_CONST++;
             else if (tokenType == Token::ADD_OP || tokenType == Token::MUL_OP)chk_OP++;
             currentToken = lexer.getNextToken();
