@@ -16,8 +16,8 @@ public:
         SEMI_COLON, // ;
         LEFT_PAREN, // (
         RIGHT_PAREN,// )
-        END,        // Input의 끝
-        INVALID     // 잘못된 입력
+        END,        // 
+        INVALID     // 
     };
 
     Token(Type type, std::string value);
