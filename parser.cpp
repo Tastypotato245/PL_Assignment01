@@ -96,6 +96,7 @@ FactorNode* Parser::parseFactor() {
         else {
             std::cout << "(Warning)" << "check" << std::endl;
             output_Line.erase(std::find(output_Line.begin(), output_Line.end(), '('));
+            return new FactorNode(isParsed, symbolTable, isParsed, expression, isParsed);
         }
     } else if (currentToken.type == Token::IDENT) {
 		//std::cout << "\t\t\t\t factor => ident\n";
