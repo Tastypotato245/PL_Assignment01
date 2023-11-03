@@ -69,11 +69,11 @@ TermTailNode* Parser::parseTermTail() {
         TermTailNode* termTail = parseTermTail();
         return new TermTailNode(isParsed, symbolTable, add_op, term, termTail);
     }
-    else if (currentToken.type == Token::RIGHT_PAREN) {
+    /*else if (currentToken.type == Token::RIGHT_PAREN) {
         std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
         eat(Token::RIGHT_PAREN);
         return parseTermTail();
-        } 
+    } */
     
 	//std::cout << "\t\t\t\t term_tail => lambda\n";
     return nullptr; 
@@ -89,12 +89,12 @@ FactorNode* Parser::parseFactor() {
         ExpressionNode* expression = parseExpression();
         //std::cout << ")";
         if(currentToken.type==Token::RIGHT_PAREN) {
-            //output_Line.append(" )");
+            output_Line.append(" )");
             eat(Token::RIGHT_PAREN);
             return new FactorNode(isParsed, symbolTable, isParsed, expression, isParsed);
         }
         else {
-            std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
+            std::cout << "(Warning)" << "check" << std::endl;
             output_Line.erase(std::find(output_Line.begin(), output_Line.end(), '('));
         }
     } else if (currentToken.type == Token::IDENT) {
@@ -143,11 +143,11 @@ FactorTailNode* Parser::parseFactorTail() {
         FactorTailNode* factorTail = parseFactorTail();
         return new FactorTailNode(true, symbolTable, mul_op, factor, factorTail);
     }
-    else if (currentToken.type == Token::RIGHT_PAREN) {
+    /*else if (currentToken.type == Token::RIGHT_PAREN) {
         std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
         eat(Token::RIGHT_PAREN);
         return parseFactorTail();
-    }
+    }*/
         
     
 	//std::cout << "\t\t\t\t factor_tail => lambda \n";

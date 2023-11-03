@@ -17,8 +17,8 @@ private:
     int chk_OP;
     std::string output_Line;
 
-    void error(const std::string message/* Token::Type tokenType*/) {
-        std::cout << "Error parsing: " << message/*"Expected token type: " << std::to_string(tokenType)*/ << ". Got: " << currentToken.value << "\n";
+    void error(const std::string& message) {
+        std::cout << "Error parsing: " << message << ". Got: " << currentToken.value << "\n";
         isParsed = false;
     }
 
