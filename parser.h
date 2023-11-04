@@ -15,6 +15,7 @@ private:
     int chk_ID;
     int chk_CONST;
     int chk_OP;
+    std::string output_Line;
 
     void error(const std::string& message) {
         std::cout << "Error parsing: " << message << ". Got: " << currentToken.value << "\n";
@@ -23,7 +24,7 @@ private:
 
     void eat(Token::Type tokenType) {
         if (currentToken.type == tokenType) {
-            if (tokenType == Token::IDENT)chk_ID++;
+            if (tokenType == Token::IDENT) chk_ID++;
             else if (tokenType == Token::CONST)chk_CONST++;
             else if (tokenType == Token::ADD_OP || tokenType == Token::MUL_OP)chk_OP++;
             currentToken = lexer.getNextToken();
