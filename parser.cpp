@@ -10,9 +10,6 @@ ProgramNode* Parser::parseProgram() {
 }
 
 StatementsNode* Parser::parseStatements() {
-    chk_ID = 0;
-    chk_CONST = 0;
-    chk_OP = 0;
 	//std::cout << "\t - parseStatements excute\n";
     StatementNode* statement = parseStatement();
     if (currentToken.type != Token::END) {
@@ -20,16 +17,21 @@ StatementsNode* Parser::parseStatements() {
         output_Line.append(";");
     	eat(Token::SEMI_COLON); 
         std::cout << output_Line << std::endl;
+        std::cout << errorMessage;
         std::cout << "ID: " << chk_ID << "; CONST:" << chk_CONST << "; OP: " << chk_OP << std::endl;
         output_Line = "\0";
         return new StatementsNode(statement, isParsed, parseStatements());
     }
     std::cout << output_Line << std::endl;
+    std::cout << errorMessage;
     std::cout << "ID: " << chk_ID << "; CONST:" << chk_CONST << "; OP: " << chk_OP << std::endl;
     return new StatementsNode(statement, isParsed, nullptr);
 }
 
 StatementNode* Parser::parseStatement() {
+    chk_ID = 0;
+    chk_CONST = 0;
+    chk_OP = 0;
     std::string ident = currentToken.value;
     //std::cout << ident << " :=";
     output_Line.append(ident);
@@ -94,7 +96,10 @@ FactorNode* Parser::parseFactor() {
             return new FactorNode(isParsed, symbolTable, isParsed, expression, isParsed);
         }
         else {
-            std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
+            errorMessage.append("(Warning)");
+            errorMessage.append("checking if the parentheses are properly opened and closed");
+            errorMessage.append("\n");
+            //std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
             output_Line.erase(std::find(output_Line.begin(), output_Line.end(), '('));
             return new FactorNode(isParsed, symbolTable, isParsed, expression, isParsed);
         }
@@ -115,16 +120,27 @@ FactorNode* Parser::parseFactor() {
         eat(Token::CONST);
         return new FactorNode(true, symbolTable, value);
     } else if (currentToken.type == Token::ADD_OP) {
-        std::cout << "(Warning)" << "Operator is duplicated." << std::endl;
+        errorMessage.append("(Warning)");
+        errorMessage.append("Operator is duplicated.");
+        errorMessage.append("\n");
+        chk_OP--;
+        //std::cout << "(Warning)" << "Operator is duplicated." << std::endl;
         eat(Token::ADD_OP);
         return parseFactor();
     } else if (currentToken.type == Token::MUL_OP) {
-        std::cout << "(Warning)" << "Operator is duplicated." << std::endl;
+        errorMessage.append("(Warning)");
+        errorMessage.append("Operator is duplicated.");
+        errorMessage.append("\n");
+        chk_OP--;
+        //std::cout << "(Warning)" << "Operator is duplicated." << std::endl;
         eat(Token::MUL_OP);
         return parseFactor();
     }
     else if (currentToken.type == Token::RIGHT_PAREN) {
-        std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
+        errorMessage.append("(Warning)");
+        errorMessage.append("checking if the parentheses are properly opened and closed");
+        errorMessage.append("\n");
+        //std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
         eat(Token::RIGHT_PAREN);
         return parseFactor();
     }

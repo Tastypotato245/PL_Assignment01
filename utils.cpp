@@ -78,7 +78,10 @@ bool SymbolTable::get(const std::string& name, double& value) const {
 }
 
 bool SymbolTable::exists(const std::string& name) const {
-	return symbols.find(name) != symbols.end();
+	auto itr = symbols.find(name);
+	if (itr != symbols.end())return true;
+	else return false;
+	//return symbols.find(name) != symbols.end();
 }
 
 void SymbolTable::print_result() const{

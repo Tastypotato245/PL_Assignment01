@@ -16,6 +16,7 @@ private:
     int chk_CONST;
     int chk_OP;
     std::string output_Line;
+    std::string errorMessage;
 
     void error(const std::string& message) {
         std::cout << "Error parsing: " << message << ". Got: " << currentToken.value << "\n";

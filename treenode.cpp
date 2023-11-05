@@ -34,13 +34,15 @@ double StatementNode::calculate() {
 ExpressionNode::ExpressionNode(bool isParsed, SymbolTable& symbolTable, TermNode* termNode, TermTailNode* termTailNode): TreeNode(isParsed,symbolTable),
                                                                                                                          termTailNode(termTailNode), termNode(termNode){};
 double ExpressionNode::calculate() {
+    //if (TreeNode::isParsed == false) return (std::nan("NaN"));
 	if (termTailNode == nullptr)
 		return termNode->calculate();
     if (termTailNode->get_op() == 1)
         return termNode->calculate() + termTailNode->calculate();
     if (termTailNode->get_op() == 2)
         return termNode->calculate() - termTailNode->calculate();
-	return (std::nan("NaN"));
+    return (std::nan("NaN"));
+	
 }
 
 //term
@@ -81,8 +83,9 @@ double FactorNode::calculate() {
     if (isParsed)
     {
         double value;
-        if (symbolTable.get(ident, value))
+        if (symbolTable.get(ident, value)) {
             return value;
+        }
         if (expressionNode != nullptr)
             return expressionNode->calculate();
 		//std::cout << "_const : " << _const << "\n";
