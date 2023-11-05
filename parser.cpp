@@ -37,6 +37,7 @@ StatementNode* Parser::parseStatement() {
     //std::cout << ident << " :=";
     output_Line.append(ident);
     output_Line.append(" :=");
+    isdefine.push_back(ident);
     eat(Token::IDENT);
     eat(Token::ASSIGN_OP);
 	//std::cout << "\t - parseStatement excute : ident : " << ident << "\n";
@@ -113,6 +114,15 @@ FactorNode* Parser::parseFactor() {
     } else if (currentToken.type == Token::IDENT) {
 		//std::cout << "\t\t\t\t factor => ident\n";
         std::string ident = currentToken.value;
+        if (std::find(isdefine.begin(), isdefine.end(), ident) == isdefine.end()) {
+            errorMessage.append("(Error)");
+            errorMessage.append("Cannot use undefined variable.");
+            errorMessage.append("\n");
+            output_Line.append(" ");
+            output_Line.append(ident);
+            eat(Token::IDENT);
+            return new FactorNode(false, symbolTable, ident);
+        }
         //std::cout << " " <<ident;
         output_Line.append(" ");
         output_Line.append(ident);

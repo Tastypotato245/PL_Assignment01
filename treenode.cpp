@@ -35,6 +35,8 @@ ExpressionNode::ExpressionNode(bool isParsed, SymbolTable& symbolTable, TermNode
                                                                                                                          termTailNode(termTailNode), termNode(termNode){};
 double ExpressionNode::calculate() {
     //if (TreeNode::isParsed == false) return (std::nan("NaN"));
+    if (termNode->calculate() == std::nan("NaN"))
+        return (std::nan("NaN"));
 	if (termTailNode == nullptr)
 		return termNode->calculate();
     if (termTailNode->get_op() == 1)
@@ -42,13 +44,14 @@ double ExpressionNode::calculate() {
     if (termTailNode->get_op() == 2)
         return termNode->calculate() - termTailNode->calculate();
     return (std::nan("NaN"));
-	
 }
 
 //term
 TermNode::TermNode(bool isParsed, SymbolTable& symbolTable, FactorNode* factorNode, FactorTailNode* factorTailNode) : TreeNode(isParsed, symbolTable),
                                                                                                                       factorNode(factorNode), factorTailNode(factorTailNode){};
 double TermNode::calculate() {
+    if (factorNode->calculate() == std::nan("NaN"))
+        return (std::nan("NaN"));
 	if (factorTailNode == nullptr)
 		return factorNode->calculate();
     if (factorTailNode->get_op() == 1)
@@ -62,13 +65,15 @@ TermTailNode::TermTailNode(bool isParsed, SymbolTable& symbolTable) : TreeNode(i
 TermTailNode::TermTailNode(bool isParsed, SymbolTable& symbolTable, int add_op, TermNode* termNode, TermTailNode* termTailNode) : TreeNode(isParsed, symbolTable),
                                                                                                                                   add_op(add_op), termNode(termNode), termTailNode(termTailNode){};
 double TermTailNode::calculate() {
+    if(termNode->calculate()== std::nan("NaN"))
+        return (std::nan("NaN"));
 	if (termTailNode == nullptr)
 		return termNode->calculate();
     if (termTailNode->get_op() == 1)
         return termNode->calculate() + termTailNode->calculate();
     if (termTailNode->get_op() == 2)
         return termNode->calculate() - termTailNode->calculate();
-	return (std::nan("NaN"));
+    return (std::nan("NaN"));
 }
 int TermTailNode::get_op() {return add_op;}
 
@@ -99,6 +104,8 @@ FactorTailNode::FactorTailNode(bool isParsed, SymbolTable& symbolTable) : TreeNo
 FactorTailNode::FactorTailNode(bool isParsed, SymbolTable& symbolTable, int mult_op, FactorNode* factorNode, FactorTailNode* factorTailNode) : TreeNode(isParsed, symbolTable),
                                                                                                                                                mult_op(mult_op), factorNode(factorNode), factorTailNode(factorTailNode){};
 double FactorTailNode::calculate() {
+    if (factorNode->calculate() == std::nan("NaN"))
+        return (std::nan("NaN"));
 	if (factorTailNode == nullptr)
 		return factorNode->calculate();
     if (factorTailNode->get_op() == 1)
