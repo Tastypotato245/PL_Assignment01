@@ -94,7 +94,7 @@ FactorNode* Parser::parseFactor() {
             return new FactorNode(isParsed, symbolTable, isParsed, expression, isParsed);
         }
         else {
-            std::cout << "(Warning)" << "check" << std::endl;
+            std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
             output_Line.erase(std::find(output_Line.begin(), output_Line.end(), '('));
             return new FactorNode(isParsed, symbolTable, isParsed, expression, isParsed);
         }
