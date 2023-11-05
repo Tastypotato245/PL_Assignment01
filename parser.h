@@ -15,6 +15,7 @@ private:
     int chk_ID;
     int chk_CONST;
     int chk_OP;
+    int chk_LParen;
     std::string output_Line;
     std::string errorMessage;
 
