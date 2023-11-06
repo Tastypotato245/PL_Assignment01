@@ -20,6 +20,7 @@ StatementsNode* Parser::parseStatements() {
         std::cout << errorMessage;
         std::cout << "ID: " << chk_ID << "; CONST:" << chk_CONST << "; OP: " << chk_OP << std::endl;
         output_Line = "\0";
+        errorMessage = "\0";
         return new StatementsNode(statement, isParsed, parseStatements());
     }
     std::cout << output_Line << std::endl;
@@ -82,6 +83,22 @@ TermTailNode* Parser::parseTermTail() {
             return parseTermTail();
         }
     } 
+    else if (currentToken.type == Token::IDENT) {
+        errorMessage.append("(Error)");
+        errorMessage.append("Invalid location of Token.");
+        errorMessage.append("\n");
+        output_Line.append(' '+currentToken.value);
+        eat(Token::IDENT);
+        return new TermTailNode(false, symbolTable);
+    }
+    else if(currentToken.type == Token::CONST) {
+        errorMessage.append("(Error)");
+        errorMessage.append("Invalid location of Token.");
+        errorMessage.append("\n");
+        output_Line.append(' ' + currentToken.value);
+        eat(Token::CONST);
+        return new TermTailNode(false, symbolTable);
+    }
     
 	//std::cout << "\t\t\t\t term_tail => lambda\n";
     return nullptr; 
@@ -118,8 +135,7 @@ FactorNode* Parser::parseFactor() {
             errorMessage.append("(Error)");
             errorMessage.append("Cannot use undefined variable.");
             errorMessage.append("\n");
-            output_Line.append(" ");
-            output_Line.append(ident);
+            output_Line.append(' '+ident);
             eat(Token::IDENT);
             return new FactorNode(false, symbolTable, ident);
         }
@@ -185,6 +201,22 @@ FactorTailNode* Parser::parseFactorTail() {
             eat(Token::RIGHT_PAREN);
             return parseFactorTail();
         }
+    }
+    else if (currentToken.type == Token::IDENT) {
+        errorMessage.append("(Error)");
+        errorMessage.append("Invalid location of Token.");
+        errorMessage.append("\n");
+        output_Line.append(' ' + currentToken.value);
+        eat(Token::IDENT);
+        return new FactorTailNode(false, symbolTable);
+    }
+    else if(currentToken.type == Token::CONST) {
+        errorMessage.append("(Error)");
+        errorMessage.append("Invalid location of Token.");
+        errorMessage.append("\n");
+        output_Line.append(' ' + currentToken.value);
+        eat(Token::CONST);
+        return new FactorTailNode(false, symbolTable);
     }
 	//std::cout << "\t\t\t\t factor_tail => lambda \n";
     return nullptr;

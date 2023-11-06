@@ -33,6 +33,6 @@ int main(int argc, char **argv)
 	symbolTable.print_result();
 
 	delete rootNode;
-	atexit(asdf);
+	//atexit(asdf);
     return (0);
 }
