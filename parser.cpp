@@ -11,11 +11,22 @@ ProgramNode* Parser::parseProgram() {
 
 StatementsNode* Parser::parseStatements() {
 	//std::cout << "\t - parseStatements excute\n";
+
     StatementNode* statement = parseStatement();
     if (currentToken.type != Token::END) {
-        //std::cout << ";" << std::endl;
+        //std::cout << ";" << std::endl
         output_Line.append(";");
     	eat(Token::SEMI_COLON); 
+        if (currentToken.type == Token::END) {
+            output_Line.erase(std::find(output_Line.begin(), output_Line.end(), ';'));
+            errorMessage.append("(Warning)");
+            errorMessage.append("Invalid Location of SEMICOLON.");
+            errorMessage.append("\n");
+            std::cout << output_Line << std::endl;
+            std::cout << errorMessage;
+            std::cout << "ID: " << chk_ID << "; CONST:" << chk_CONST << "; OP: " << chk_OP << std::endl;
+            return new StatementsNode(statement, isParsed, nullptr);
+        }
         std::cout << output_Line << std::endl;
         std::cout << errorMessage;
         std::cout << "ID: " << chk_ID << "; CONST:" << chk_CONST << "; OP: " << chk_OP << std::endl;

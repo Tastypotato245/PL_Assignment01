@@ -24,6 +24,7 @@ int main(int argc, char **argv)
     std::getline(file, input, '\0');
     file.close();
     std::cout << input << std::endl;
+    std::cout << std::endl;
 //	std::string input a = "";
 
 	SymbolTable symbolTable;
