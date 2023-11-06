@@ -47,13 +47,16 @@ ExpressionNode::~ExpressionNode()
 	delete termTailNode;
 }
 double ExpressionNode::calculate() {
+    //if (TreeNode::isParsed == false) return (std::nan("NaN"));
+    if (termNode->calculate() == std::nan("NaN"))
+        return (std::nan("NaN"));
 	if (termTailNode == nullptr)
 		return termNode->calculate();
     if (termTailNode->get_op() == 1)
         return termNode->calculate() + termTailNode->calculate();
     if (termTailNode->get_op() == 2)
         return termNode->calculate() - termTailNode->calculate();
-	return (std::nan("NaN"));
+    return (std::nan("NaN"));
 }
 
 //term
@@ -66,6 +69,8 @@ TermNode::~TermNode()
 }
 
 double TermNode::calculate() {
+    if (factorNode->calculate() == std::nan("NaN"))
+        return (std::nan("NaN"));
 	if (factorTailNode == nullptr)
 		return factorNode->calculate();
     if (factorTailNode->get_op() == 1)
@@ -83,13 +88,15 @@ TermTailNode::~TermTailNode()
 	delete termTailNode;
 }
 double TermTailNode::calculate() {
+    if(termNode->calculate()== std::nan("NaN"))
+        return (std::nan("NaN"));
 	if (termTailNode == nullptr)
 		return termNode->calculate();
     if (termTailNode->get_op() == 1)
         return termNode->calculate() + termTailNode->calculate();
     if (termTailNode->get_op() == 2)
         return termNode->calculate() - termTailNode->calculate();
-	return (std::nan("NaN"));
+    return (std::nan("NaN"));
 }
 int TermTailNode::get_op() {return add_op;}
 
@@ -103,8 +110,9 @@ double FactorNode::calculate() {
     if (isParsed)
     {
         double value;
-        if (symbolTable.get(ident, value))
+        if (symbolTable.get(ident, value)) {
             return value;
+        }
         if (expressionNode != nullptr)
             return expressionNode->calculate();
 		//std::cout << "_const : " << _const << "\n";
@@ -122,6 +130,8 @@ FactorTailNode::~FactorTailNode()
 	delete factorTailNode;
 }
 double FactorTailNode::calculate() {
+    if (factorNode->calculate() == std::nan("NaN"))
+        return (std::nan("NaN"));
 	if (factorTailNode == nullptr)
 		return factorNode->calculate();
     if (factorTailNode->get_op() == 1)

@@ -10,9 +10,6 @@ ProgramNode* Parser::parseProgram() {
 }
 
 StatementsNode* Parser::parseStatements() {
-    chk_ID = 0;
-    chk_CONST = 0;
-    chk_OP = 0;
 	//std::cout << "\t - parseStatements excute\n";
     StatementNode* statement = parseStatement();
     if (currentToken.type != Token::END) {
@@ -20,20 +17,27 @@ StatementsNode* Parser::parseStatements() {
         output_Line.append(";");
     	eat(Token::SEMI_COLON); 
         std::cout << output_Line << std::endl;
+        std::cout << errorMessage;
         std::cout << "ID: " << chk_ID << "; CONST:" << chk_CONST << "; OP: " << chk_OP << std::endl;
         output_Line = "\0";
         return new StatementsNode(statement, isParsed, parseStatements());
     }
     std::cout << output_Line << std::endl;
+    std::cout << errorMessage;
     std::cout << "ID: " << chk_ID << "; CONST:" << chk_CONST << "; OP: " << chk_OP << std::endl;
     return new StatementsNode(statement, isParsed, nullptr);
 }
 
 StatementNode* Parser::parseStatement() {
+    chk_ID = 0;
+    chk_CONST = 0;
+    chk_OP = 0;
+    chk_LParen = 0;
     std::string ident = currentToken.value;
     //std::cout << ident << " :=";
     output_Line.append(ident);
     output_Line.append(" :=");
+    isdefine.push_back(ident);
     eat(Token::IDENT);
     eat(Token::ASSIGN_OP);
 	//std::cout << "\t - parseStatement excute : ident : " << ident << "\n";
@@ -69,11 +73,15 @@ TermTailNode* Parser::parseTermTail() {
         TermTailNode* termTail = parseTermTail();
         return new TermTailNode(isParsed, symbolTable, add_op, term, termTail);
     }
-    /*else if (currentToken.type == Token::RIGHT_PAREN) {
-        std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
-        eat(Token::RIGHT_PAREN);
-        return parseTermTail();
-    } */
+    else if (currentToken.type == Token::RIGHT_PAREN) {
+        if (chk_LParen == 0) {
+            errorMessage.append("(Warning)");
+            errorMessage.append("checking if the parentheses are properly opened and closed");
+            errorMessage.append("\n");
+            eat(Token::RIGHT_PAREN);
+            return parseTermTail();
+        }
+    } 
     
 	//std::cout << "\t\t\t\t term_tail => lambda\n";
     return nullptr; 
@@ -84,22 +92,37 @@ FactorNode* Parser::parseFactor() {
     if (currentToken.type == Token::LEFT_PAREN) {
 		//std::cout << "\t\t\t\t factor => ( ex )\n";
         //std::cout << "(";
+        chk_LParen++;
         output_Line.append(" (");
         eat(Token::LEFT_PAREN);
         ExpressionNode* expression = parseExpression();
         //std::cout << ")";
         if(currentToken.type==Token::RIGHT_PAREN) {
+            chk_LParen--;
             output_Line.append(" )");
             eat(Token::RIGHT_PAREN);
             return new FactorNode(isParsed, symbolTable, isParsed, expression, isParsed);
         }
         else {
-            std::cout << "(Warning)" << "check" << std::endl;
+            errorMessage.append("(Warning)");
+            errorMessage.append("checking if the parentheses are properly opened and closed");
+            errorMessage.append("\n");
+            //std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
             output_Line.erase(std::find(output_Line.begin(), output_Line.end(), '('));
+            return new FactorNode(isParsed, symbolTable, isParsed, expression, isParsed);
         }
     } else if (currentToken.type == Token::IDENT) {
 		//std::cout << "\t\t\t\t factor => ident\n";
         std::string ident = currentToken.value;
+        if (std::find(isdefine.begin(), isdefine.end(), ident) == isdefine.end()) {
+            errorMessage.append("(Error)");
+            errorMessage.append("Cannot use undefined variable.");
+            errorMessage.append("\n");
+            output_Line.append(" ");
+            output_Line.append(ident);
+            eat(Token::IDENT);
+            return new FactorNode(false, symbolTable, ident);
+        }
         //std::cout << " " <<ident;
         output_Line.append(" ");
         output_Line.append(ident);
@@ -114,16 +137,27 @@ FactorNode* Parser::parseFactor() {
         eat(Token::CONST);
         return new FactorNode(true, symbolTable, value);
     } else if (currentToken.type == Token::ADD_OP) {
-        std::cout << "(Warning)" << "Operator is duplicated." << std::endl;
+        errorMessage.append("(Warning)");
+        errorMessage.append("Operator is duplicated.");
+        errorMessage.append("\n");
+        chk_OP--;
+        //std::cout << "(Warning)" << "Operator is duplicated." << std::endl;
         eat(Token::ADD_OP);
         return parseFactor();
     } else if (currentToken.type == Token::MUL_OP) {
-        std::cout << "(Warning)" << "Operator is duplicated." << std::endl;
+        errorMessage.append("(Warning)");
+        errorMessage.append("Operator is duplicated.");
+        errorMessage.append("\n");
+        chk_OP--;
+        //std::cout << "(Warning)" << "Operator is duplicated." << std::endl;
         eat(Token::MUL_OP);
         return parseFactor();
     }
     else if (currentToken.type == Token::RIGHT_PAREN) {
-        std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
+        errorMessage.append("(Warning)");
+        errorMessage.append("checking if the parentheses are properly opened and closed");
+        errorMessage.append("\n");
+        //std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
         eat(Token::RIGHT_PAREN);
         return parseFactor();
     }
@@ -143,13 +177,15 @@ FactorTailNode* Parser::parseFactorTail() {
         FactorTailNode* factorTail = parseFactorTail();
         return new FactorTailNode(true, symbolTable, mul_op, factor, factorTail);
     }
-    /*else if (currentToken.type == Token::RIGHT_PAREN) {
-        std::cout << "(Warning)" << "checking if the parentheses are properly opened and closed" << std::endl;
-        eat(Token::RIGHT_PAREN);
-        return parseFactorTail();
-    }*/
-        
-    
+    else if (currentToken.type == Token::RIGHT_PAREN) {
+        if (chk_LParen == 0) {
+            errorMessage.append("(Warning)");
+            errorMessage.append("checking if the parentheses are properly opened and closed");
+            errorMessage.append("\n");
+            eat(Token::RIGHT_PAREN);
+            return parseFactorTail();
+        }
+    }
 	//std::cout << "\t\t\t\t factor_tail => lambda \n";
     return nullptr;
 }
