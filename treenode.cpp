@@ -32,6 +32,10 @@ void StatementsNode::calculate_statement(){
 StatementNode::StatementNode(bool isParsed, SymbolTable& symbolTable, std::string ident, bool assignment_op, ExpressionNode* expressionNode) : TreeNode(isParsed, symbolTable), ident(ident), assignment_op(assignment_op), expressionNode(expressionNode){};
 double StatementNode::calculate() {
     double value;
+    if (expressionNode == nullptr) {
+        symbolTable.set(ident, (std::nan("NaN")));
+        return (std::nan("NaN"));
+    }
     value = expressionNode->calculate();
     symbolTable.set(ident, value);
     return value;

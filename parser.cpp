@@ -41,6 +41,13 @@ StatementNode* Parser::parseStatement() {
     isdefine.push_back(ident);
     eat(Token::IDENT);
     eat(Token::ASSIGN_OP);
+    if (currentToken.type == Token::SEMI_COLON || currentToken.type == Token::END) { 
+        errorMessage.append("(Error)");
+        errorMessage.append("Empty RHS");
+        errorMessage.append("\n");
+        output_Line.append(" ");
+        return new StatementNode(false, symbolTable, ident, false, nullptr);
+    }
 	//std::cout << "\t - parseStatement excute : ident : " << ident << "\n";
     ExpressionNode* expression = parseExpression();
     return new StatementNode(isParsed, symbolTable, ident, isParsed, expression);
