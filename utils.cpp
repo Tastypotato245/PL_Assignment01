@@ -87,6 +87,11 @@ bool SymbolTable::exists(const std::string& name) const {
 void SymbolTable::print_result() const{
 	std::cout << "Result ==>";
 	for(const auto& pair : symbols) {
-        std::cout << " " << pair.first << ": " << pair.second << ";";
+        std::cout << " " << pair.first << ": ";
+		if (std::isnan(pair.second))
+			std::cout << "Unknown";
+		else
+			std::cout << pair.second;
+		std::cout << ";";
     }
 }
