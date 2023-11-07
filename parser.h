@@ -21,23 +21,23 @@ private:
     std::vector <std::string>isdefine;
 
     void error(const std::string& message) {
-        std::cout << "Error parsing: " << message << ". Got: " << currentToken.value << "\n";
+        std::cout << "Error parsing: " << message << ". Got: " << currentToken.token_string << "\n";
         isParsed = false;
     }
 
     void eat(Token::Type tokenType) {
-        if (currentToken.type == tokenType) {
+        if (currentToken.next_token == tokenType) {
             if (tokenType == Token::IDENT) chk_ID++;
             else if (tokenType == Token::CONST)chk_CONST++;
             else if (tokenType == Token::ADD_OP || tokenType == Token::MUL_OP)chk_OP++;
-            currentToken = lexer.getNextToken();
+            currentToken = lexer.lexical();
         } else {
             error("Expected token type: " + std::to_string(tokenType));
         }
     }
 
 public:
-    Parser(const std::string& input, SymbolTable& symbolTable) : lexer(input), currentToken(lexer.getNextToken()), isParsed(true), symbolTable(symbolTable) {}
+    Parser(const std::string& input, SymbolTable& symbolTable) : lexer(input), currentToken(lexer.lexical()), isParsed(true), symbolTable(symbolTable) {}
 
     ProgramNode* parseProgram();
     StatementsNode* parseStatements();

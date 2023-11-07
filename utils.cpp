@@ -1,14 +1,16 @@
 #include "utils.h"
 
-Token::Token(Type type, std::string value) : type(type), value(value) {}
+Token::Token(Type next_token, std::string token_string) : next_token(next_token), token_string(token_string) {}
 
 Lexer::Lexer(const std::string& input) : input(input), position(0) {}
 
-Token Lexer::getNextToken() {
+Token Lexer::lexical() {
 	while (position < input.size() && std::isspace(input[position])) {
 		++position;
 	}
-
+	while (position < input.size() && input[position]<=32) {
+		++position;
+	}
 	if (position >= input.size()) {
 		return Token(Token::END, "");
 	}

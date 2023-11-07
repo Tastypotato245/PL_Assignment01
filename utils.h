@@ -20,16 +20,16 @@ public:
         INVALID     // 
     };
 
-    Token(Type type, std::string value);
+    Token(Type next_token, std::string token_string);
 
-    Type type;
-    std::string value;
+    Type next_token;
+    std::string token_string;
 };
 
 class Lexer {
 public:
     Lexer(const std::string& input);
-    Token getNextToken();
+    Token lexical();
 
 private:
     const std::string input;

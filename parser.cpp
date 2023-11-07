@@ -13,11 +13,11 @@ StatementsNode* Parser::parseStatements() {
 	//std::cout << "\t - parseStatements excute\n";
 
     StatementNode* statement = parseStatement();
-    if (currentToken.type != Token::END) {
+    if (currentToken.next_token != Token::END) {
         //std::cout << ";" << std::endl
         output_Line.append(";");
     	eat(Token::SEMI_COLON); 
-        if (currentToken.type == Token::END) {
+        if (currentToken.next_token == Token::END) {
             output_Line.erase(std::find(output_Line.begin(), output_Line.end(), ';'));
             errorMessage.append("(Warning)");
             errorMessage.append("Invalid Location of SEMICOLON.");
@@ -45,14 +45,14 @@ StatementNode* Parser::parseStatement() {
     chk_CONST = 0;
     chk_OP = 0;
     chk_LParen = 0;
-    std::string ident = currentToken.value;
+    std::string ident = currentToken.token_string;
     //std::cout << ident << " :=";
     output_Line.append(ident);
     output_Line.append(" :=");
     isdefine.push_back(ident);
     eat(Token::IDENT);
     eat(Token::ASSIGN_OP);
-    if (currentToken.type == Token::SEMI_COLON || currentToken.type == Token::END) { 
+    if (currentToken.next_token == Token::SEMI_COLON || currentToken.next_token == Token::END) { 
         errorMessage.append("(Error)");
         errorMessage.append("Empty RHS");
         errorMessage.append("\n");
@@ -80,9 +80,9 @@ TermNode* Parser::parseTerm() {
 
 TermTailNode* Parser::parseTermTail() {
 	//std::cout << "\t\t\t - parseTermTail excute\n";
-    if (currentToken.type == Token::ADD_OP) {
+    if (currentToken.next_token == Token::ADD_OP) {
 		//std::cout << "\t\t\t\t term_tail => add_op <term> <term_tail>\n";
-        int add_op = (currentToken.value == "+") ? 1 : 2;
+        int add_op = (currentToken.token_string == "+") ? 1 : 2;
         if(add_op==1)//std::cout << " +";
             output_Line.append(" +");
         else //std::cout << " -";
@@ -92,7 +92,7 @@ TermTailNode* Parser::parseTermTail() {
         TermTailNode* termTail = parseTermTail();
         return new TermTailNode(isParsed, symbolTable, add_op, term, termTail);
     }
-    else if (currentToken.type == Token::RIGHT_PAREN) {
+    else if (currentToken.next_token == Token::RIGHT_PAREN) {
         if (chk_LParen == 0) {
             errorMessage.append("(Warning)");
             errorMessage.append("checking if the parentheses are properly opened and closed");
@@ -101,19 +101,19 @@ TermTailNode* Parser::parseTermTail() {
             return parseTermTail();
         }
     } 
-    else if (currentToken.type == Token::IDENT) {
+    else if (currentToken.next_token == Token::IDENT) {
         errorMessage.append("(Error)");
         errorMessage.append("Invalid location of Token.");
         errorMessage.append("\n");
-        output_Line.append(' '+currentToken.value);
+        output_Line.append(' '+currentToken.token_string);
         eat(Token::IDENT);
         return new TermTailNode(false, symbolTable);
     }
-    else if(currentToken.type == Token::CONST) {
+    else if(currentToken.next_token == Token::CONST) {
         errorMessage.append("(Error)");
         errorMessage.append("Invalid location of Token.");
         errorMessage.append("\n");
-        output_Line.append(' ' + currentToken.value);
+        output_Line.append(' ' + currentToken.token_string);
         eat(Token::CONST);
         return new TermTailNode(false, symbolTable);
     }
@@ -124,7 +124,7 @@ TermTailNode* Parser::parseTermTail() {
 
 FactorNode* Parser::parseFactor() {
 	//std::cout << "\t\t\t - parseFactor excute\n";
-    if (currentToken.type == Token::LEFT_PAREN) {
+    if (currentToken.next_token == Token::LEFT_PAREN) {
 		//std::cout << "\t\t\t\t factor => ( ex )\n";
         //std::cout << "(";
         chk_LParen++;
@@ -132,7 +132,7 @@ FactorNode* Parser::parseFactor() {
         eat(Token::LEFT_PAREN);
         ExpressionNode* expression = parseExpression();
         //std::cout << ")";
-        if(currentToken.type==Token::RIGHT_PAREN) {
+        if(currentToken.next_token==Token::RIGHT_PAREN) {
             chk_LParen--;
             output_Line.append(" )");
             eat(Token::RIGHT_PAREN);
@@ -146,9 +146,9 @@ FactorNode* Parser::parseFactor() {
             output_Line.erase(std::find(output_Line.begin(), output_Line.end(), '('));
             return new FactorNode(isParsed, symbolTable, isParsed, expression, isParsed);
         }
-    } else if (currentToken.type == Token::IDENT) {
+    } else if (currentToken.next_token == Token::IDENT) {
 		//std::cout << "\t\t\t\t factor => ident\n";
-        std::string ident = currentToken.value;
+        std::string ident = currentToken.token_string;
         if (std::find(isdefine.begin(), isdefine.end(), ident) == isdefine.end()) {
             errorMessage.append("(Error)");
             errorMessage.append("Cannot use undefined variable.");
@@ -162,15 +162,15 @@ FactorNode* Parser::parseFactor() {
         output_Line.append(ident);
         eat(Token::IDENT);
         return new FactorNode(true, symbolTable, ident);
-    } else if (currentToken.type == Token::CONST) {
-        double value = std::stod(currentToken.value);
+    } else if (currentToken.next_token == Token::CONST) {
+        double value = std::stod(currentToken.token_string);
 		//std::cout << "\t\t\t\t factor => const : " << value << "\n";
         //std::cout << " " << value;
         output_Line.append(" ");
         output_Line.append(std::to_string((int)value));
         eat(Token::CONST);
         return new FactorNode(true, symbolTable, value);
-    } else if (currentToken.type == Token::ADD_OP) {
+    } else if (currentToken.next_token == Token::ADD_OP) {
         errorMessage.append("(Warning)");
         errorMessage.append("Operator is duplicated.");
         errorMessage.append("\n");
@@ -178,7 +178,7 @@ FactorNode* Parser::parseFactor() {
         //std::cout << "(Warning)" << "Operator is duplicated." << std::endl;
         eat(Token::ADD_OP);
         return parseFactor();
-    } else if (currentToken.type == Token::MUL_OP) {
+    } else if (currentToken.next_token == Token::MUL_OP) {
         errorMessage.append("(Warning)");
         errorMessage.append("Operator is duplicated.");
         errorMessage.append("\n");
@@ -187,7 +187,7 @@ FactorNode* Parser::parseFactor() {
         eat(Token::MUL_OP);
         return parseFactor();
     }
-    else if (currentToken.type == Token::RIGHT_PAREN) {
+    else if (currentToken.next_token == Token::RIGHT_PAREN) {
         errorMessage.append("(Warning)");
         errorMessage.append("checking if the parentheses are properly opened and closed");
         errorMessage.append("\n");
@@ -200,8 +200,8 @@ FactorNode* Parser::parseFactor() {
 
 FactorTailNode* Parser::parseFactorTail() {
 	//std::cout << "\t\t\t - parseFactorTail excute\n";
-    if (currentToken.type == Token::MUL_OP) {
-        int mul_op = (currentToken.value == "*") ? 1 : 2;
+    if (currentToken.next_token == Token::MUL_OP) {
+        int mul_op = (currentToken.token_string == "*") ? 1 : 2;
         if (mul_op == 1)//std::cout << "*";
             output_Line.append(" *");
         else //std::cout << "/";
@@ -211,7 +211,7 @@ FactorTailNode* Parser::parseFactorTail() {
         FactorTailNode* factorTail = parseFactorTail();
         return new FactorTailNode(true, symbolTable, mul_op, factor, factorTail);
     }
-    else if (currentToken.type == Token::RIGHT_PAREN) {
+    else if (currentToken.next_token == Token::RIGHT_PAREN) {
         if (chk_LParen == 0) {
             errorMessage.append("(Warning)");
             errorMessage.append("checking if the parentheses are properly opened and closed");
@@ -220,19 +220,19 @@ FactorTailNode* Parser::parseFactorTail() {
             return parseFactorTail();
         }
     }
-    else if (currentToken.type == Token::IDENT) {
+    else if (currentToken.next_token == Token::IDENT) {
         errorMessage.append("(Error)");
         errorMessage.append("Invalid location of Token.");
         errorMessage.append("\n");
-        output_Line.append(' ' + currentToken.value);
+        output_Line.append(' ' + currentToken.token_string);
         eat(Token::IDENT);
         return new FactorTailNode(false, symbolTable);
     }
-    else if(currentToken.type == Token::CONST) {
+    else if(currentToken.next_token == Token::CONST) {
         errorMessage.append("(Error)");
         errorMessage.append("Invalid location of Token.");
         errorMessage.append("\n");
-        output_Line.append(' ' + currentToken.value);
+        output_Line.append(' ' + currentToken.token_string);
         eat(Token::CONST);
         return new FactorTailNode(false, symbolTable);
     }
