@@ -12,10 +12,13 @@ Parser
 ```bash
 $> make
 ```
-### Run
+### Build and Run
 ```bash
 $> make test
 ```
+
+file.txt is the input file used as a argument. So, tester will modify the file.txt for testing.
+
 
 ## Test environment
 - macOS 14.0 arm64

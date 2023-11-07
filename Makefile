@@ -28,4 +28,4 @@ test	:
 	make re
 	./parser file.txt
 
-.PHONY	: all clean fclean re
+.PHONY	: all clean fclean re test
