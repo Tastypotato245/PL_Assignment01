@@ -96,4 +96,5 @@ void SymbolTable::print_result() const{
 			std::cout << pair.second;
 		std::cout << ";";
     }
+	std::cout << "\n";
 }
