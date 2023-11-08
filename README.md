@@ -10,11 +10,11 @@ Parser
 ## Build and Run
 ### Build
 ```bash
-$> make
+$ make
 ```
 ### Build and Run
 ```bash
-$> make test
+$ make test
 ```
 
 file.txt is the input file used as a argument. So, tester will modify the file.txt for testing.
