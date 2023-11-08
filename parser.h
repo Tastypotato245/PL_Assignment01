@@ -21,8 +21,10 @@ private:
     std::vector <std::string>isdefine;
 
     void error(const std::string& message) {
-        std::cout << "Error parsing: " << message << ". Got: " << currentToken.token_string << "\n";
+		errorMessage.append("(Error)" + message + ". Got: " + currentToken.token_string + "\n");
         isParsed = false;
+		lexer.position++;
+        currentToken = lexer.lexical();
     }
 
     void eat(Token::Type tokenType) {

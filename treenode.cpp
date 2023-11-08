@@ -31,7 +31,7 @@ void StatementsNode::calculate_statement(){
 //statement
 StatementNode::StatementNode(bool isParsed, SymbolTable& symbolTable, std::string ident, bool assignment_op, ExpressionNode* expressionNode) : TreeNode(isParsed, symbolTable), ident(ident), assignment_op(assignment_op), expressionNode(expressionNode){};
 double StatementNode::calculate() {
-    double value;
+    double value = std::nan("NaN");
     if (expressionNode == nullptr) {
         symbolTable.set(ident, (std::nan("NaN")));
         return (std::nan("NaN"));
@@ -52,6 +52,8 @@ ExpressionNode::~ExpressionNode()
 }
 double ExpressionNode::calculate() {
     //if (TreeNode::isParsed == false) return (std::nan("NaN"));
+	if (termNode == nullptr)
+		return (std::nan("NaN"));
     if (termNode->calculate() == std::nan("NaN"))
         return (std::nan("NaN"));
 	if (termTailNode == nullptr)
@@ -73,6 +75,8 @@ TermNode::~TermNode()
 }
 
 double TermNode::calculate() {
+	if (factorNode == nullptr)
+        return (std::nan("NaN"));
     if (factorNode->calculate() == std::nan("NaN"))
         return (std::nan("NaN"));
 	if (factorTailNode == nullptr)
@@ -92,6 +96,8 @@ TermTailNode::~TermTailNode()
 	delete termTailNode;
 }
 double TermTailNode::calculate() {
+	if (termNode == nullptr)
+        return (std::nan("NaN"));
     if(termNode->calculate()== std::nan("NaN"))
         return (std::nan("NaN"));
 	if (termTailNode == nullptr)
@@ -113,7 +119,7 @@ FactorNode::~FactorNode() { delete expressionNode; }
 double FactorNode::calculate() {
     if (isParsed)
     {
-        double value;
+        double value = std::nan("NaN");
         if (symbolTable.get(ident, value)) {
             return value;
         }

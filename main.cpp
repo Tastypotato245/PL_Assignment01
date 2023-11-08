@@ -2,10 +2,10 @@
 #include <string>
 #include "parser.h"
 
-void asdf()
-{
-	system("leaks parser");
-}
+//void asdf()
+//{
+//	system("leaks parser");
+//}
 
 int main(int argc, char **argv)
 {

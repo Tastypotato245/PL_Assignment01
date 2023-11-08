@@ -30,10 +30,10 @@ class Lexer {
 public:
     Lexer(const std::string& input);
     Token lexical();
+    size_t position;
 
 private:
     const std::string input;
-    size_t position;
 };
 
 class SymbolTable {
