@@ -21,7 +21,7 @@ private:
     std::vector <std::string>isdefine;
 
     void error(const std::string& message) {
-		errorMessage.append("(Error)" + message + ". Got: " + currentToken.token_string + "\n");
+		errorMessage.append("\e[31;1m(Error)\e[37;0m" + message + ". Got: " + currentToken.token_string + "\n");
         isParsed = false;
 		lexer.position++;
         currentToken = lexer.lexical();
